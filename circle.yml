@@ -1,0 +1,24 @@
+machine:
+  services:
+    - docker
+  environment:
+    GCLOUD_PROJECT: "eve-notifications"
+    DOCKER_IMAGE_NAME: "eu.gcr.io/eve-notifications/en-zkillboard"
+    GCLOUD_ZONE: "europe-west1-d"
+
+dependencies:
+  pre:
+    - git clone https://github.com/Regner/en-kube-config.git
+    - ./en-kube-config/ensure-kubernetes-installed.sh
+    - ./en-kube-config/setup-gcloud.sh
+
+test:
+  override:
+    - echo "No tests yet. :("
+
+deployment:
+  build and deploy to dev:
+    branch: master
+    commands:
+      - ./en-kube-config/docker-push.sh
+      - ./en-kube-config/deploy.sh "eve-notifications" "en-zkillboard" "en-kube-config/en-zkillboard/en-zkillboard-rc.yml"
