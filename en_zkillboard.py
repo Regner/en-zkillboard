@@ -24,13 +24,27 @@ if not PS_TOPIC.exists():
     PS_TOPIC.create()
 
 
-def send_notification(title, subtitle, topics):
+def format_notification_subtitle(killmail):
+    character = killmail['package']['killmail']['victim']['character']['name']
+    ship = killmail['package']['killmail']['victim']['shipType']['name']
+    solar_system = killmail['package']['killmail']['solarSystem']['name']
+    value = '{0:,} ISK'.format(killmail['package']['zkb']['totalValue'])
+    
+    return '{} just lost a {} worth {} in {}.'.format(character, ship, value, solar_system)
+
+
+def format_notification_url(killmail):
+    return 'https://zkillboard.com/kill/{}/'.format(killmail['package']['killID'])
+
+
+def send_notification(killmail, topics):
     topics = json.dumps(topics)
     
     PS_TOPIC.publish(
         '',
-        title=title,
-        subtitle=subtitle,
+        title='zKillboard',
+        subtitle=format_notification_subtitle(killmail),
+        url=format_notification_url(killmail),
         service='en-zkillboard',
         topics=topics,
     )
@@ -88,6 +102,8 @@ def process_killmail(killmail):
     topics = get_topics()
     topic_strings = []
     
+    logger.info(format_notification_subtitle(killmail))
+    
     for topic in topics:
         entry = get_from_dict(topic['path'], killmail)
         
@@ -103,7 +119,7 @@ def process_killmail(killmail):
         
         topic_strings = topic_strings + convert_values_to_topics(topic, values)
     
-    logger.info(topic_strings)
+    send_notification(killmail, topic_strings)
 
 
 while True:
