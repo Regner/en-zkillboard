@@ -61,11 +61,9 @@ def process_list(entries_list, topic):
 
 def process_dict(entry_dict, topic):
     values = []
-    logging.info('process_dict: {}'.format(entry_dict))
-    logging.info('process_dict: {}'.format(topic))
     
     for key in topic['keys']:
-        value = get_from_dict(key, killmail) 
+        value = get_from_dict(key, entry_dict)
         
         if value is not None:
             values.append(value)
@@ -74,14 +72,14 @@ def process_dict(entry_dict, topic):
     
 
 def create_topic_string(topic, value):
-    return topic.replace('<int>', value)
+    return topic.replace('<int>', str(value))
 
 
 def convert_values_to_topics(topic, values):
     topic_strings = []
     
     for value in values:
-        topic_strings.append(create_topic_string(topic, value))
+        topic_strings.append(create_topic_string(topic['topic'], value))
     
     return topic_strings
 
