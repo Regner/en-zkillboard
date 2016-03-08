@@ -61,6 +61,8 @@ def process_list(entries_list, topic):
 
 def process_dict(entry_dict, topic):
     values = []
+    logging.info('process_dict: {}'.format(entry_dict))
+    logging.info('process_dict: {}'.format(topic))
     
     for key in topic['keys']:
         value = get_from_dict(key, killmail) 
