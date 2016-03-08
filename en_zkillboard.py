@@ -8,6 +8,13 @@ import requests
 from time import sleep
 from gcloud import datastore, pubsub
 
+try:
+    import googleclouddebugger
+    googleclouddebugger.AttachDebugger()
+
+except ImportError:
+    pass
+
 logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
