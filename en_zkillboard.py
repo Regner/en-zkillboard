@@ -37,14 +37,24 @@ def format_notification_url(killmail):
     return 'https://zkillboard.com/kill/{}/'.format(killmail['package']['killID'])
 
 
-def send_notification(killmail, topics):
+def prepare_notifications(killmail, topics):
+    topics_per_chunk = 80
+    topic_chunks = [topics[x:x + topics_per_chunk] for x in xrange(0, len(topics), topics_per_chunk)]
+    
+    subtitle = format_notification_subtitle(killmail)
+    url = format_notification_url(killmail)
+    
+    for chunk in topic_chunks:
+        send_notification(chunk, subtitle, url)
+
+def send_notification(topics, subtitle, url):
     topics = json.dumps(topics)
     
     PS_TOPIC.publish(
         '',
         title='zKillboard',
-        subtitle=format_notification_subtitle(killmail),
-        url=format_notification_url(killmail),
+        subtitle=subtitle,
+        url=url,
         service='en-zkillboard',
         topics=topics,
     )
@@ -102,7 +112,7 @@ def process_killmail(killmail):
     topics = get_topics()
     topic_strings = []
     
-    logger.info(format_notification_subtitle(killmail))
+    logger.info('Processing killmail {}.'.format(killmail['package']['killmail']['killID']))
     
     for topic in topics:
         entry = get_from_dict(topic['path'], killmail)
@@ -119,7 +129,7 @@ def process_killmail(killmail):
         
         topic_strings = topic_strings + convert_values_to_topics(topic, values)
     
-    send_notification(killmail, topic_strings)
+    prepare_notifications(killmail, topic_strings)
 
 
 while True:
