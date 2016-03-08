@@ -43,7 +43,7 @@ def format_notification_url(killmail):
 
 
 def prepare_notifications(killmail, topics):
-    topics_per_chunk = 80
+    topics_per_chunk = 44
     topic_chunks = [topics[x:x + topics_per_chunk] for x in xrange(0, len(topics), topics_per_chunk)]
     
     subtitle = format_notification_subtitle(killmail)
@@ -67,7 +67,7 @@ def send_notification(topics, subtitle, url):
     
     except BadRequest as e:
         logger.error(
-            'Bad request when trying to send notification. Subtitle: "{}" Url: "{}" Topics: "{}" Error: {}.'.format(
+            'Bad request when trying to send notification. Subtitle: "{}" Url: "{}" Topics: "{}"ls -la Error: {}.'.format(
                 subtitle,
                 url,
                 topics,
