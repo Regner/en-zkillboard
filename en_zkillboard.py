@@ -92,7 +92,7 @@ def process_killmail(killmail):
             values = process_dict(entry, topic)
         
         else:
-            raise
+            logger.error('Topic "{}" path didn\'t resolve to a dict or list.'.format(topic['name']))
         
         topic_strings = topic_strings + convert_values_to_topics(topic, values)
     
