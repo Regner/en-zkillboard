@@ -7,6 +7,7 @@ import requests
 
 from time import sleep
 from gcloud import datastore, pubsub
+from gcloud.exceptions import BadRequest
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -54,14 +55,25 @@ def prepare_notifications(killmail, topics):
 def send_notification(topics, subtitle, url):
     topics = json.dumps(topics)
     
-    PS_TOPIC.publish(
-        '',
-        title='zKillboard',
-        subtitle=subtitle,
-        url=url,
-        service='en-zkillboard',
-        topics=topics,
-    )
+    try:
+        PS_TOPIC.publish(
+            '',
+            title='zKillboard',
+            subtitle=subtitle,
+            url=url,
+            service='en-zkillboard',
+            topics=topics,
+        )
+    
+    except BadRequest as e:
+        logger.error(
+            'Bad request when trying to send notification. Subtitle: "{}" Url: "{}" Topics: "{}" Error: {}.'.format(
+                subtitle,
+                url,
+                topics,
+                e
+            )
+        )
 
 
 def get_topics():
