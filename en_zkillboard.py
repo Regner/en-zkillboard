@@ -44,7 +44,10 @@ def get_topics():
 
 
 def get_from_dict(map_list, data_dict):
-    return reduce(lambda d, k: d[k], map_list, data_dict)
+    try:
+        return reduce(lambda d, k: d[k], map_list, data_dict)
+    except KeyError:
+        return None
 
 
 def process_list(entries_list, topic):
@@ -60,7 +63,10 @@ def process_dict(entry_dict, topic):
     values = []
     
     for key in topic['keys']:
-        values.append(get_from_dict(key, killmail))
+        value = get_from_dict(key, killmail) 
+        
+        if value is not None:
+            values.append(value)
     
     return values
     
@@ -93,6 +99,7 @@ def process_killmail(killmail):
         
         else:
             logger.error('Topic "{}" path didn\'t resolve to a dict or list.'.format(topic['name']))
+            continue
         
         topic_strings = topic_strings + convert_values_to_topics(topic, values)
     
