@@ -47,12 +47,56 @@ def get_from_dict(map_list, data_dict):
     return reduce(lambda d, k: d[k], map_list, data_dict)
 
 
+def process_list(entries_list, topic):
+    values = []
+    
+    for entry in entries_list:
+        values = values + process_dict(entry, topic)
+    
+    return values
+
+
+def process_dict(entry_dict, topic):
+    values = []
+    
+    for key in topic['keys']:
+        values.append(get_from_dict(key, killmail))
+    
+    return values
+    
+
+def create_topic_string(topic, value):
+    return topic.replace('<int>', value)
+
+
+def convert_values_to_topics(topic, values):
+    topic_strings = []
+    
+    for value in values:
+        topic_strings.append(create_topic_string(topic, value))
+    
+    return topic_strings
+
+
 def process_killmail(killmail):
     topics = get_topics()
+    topic_strings = []
     
     for topic in topics:
         entry = get_from_dict(topic['path'], killmail)
-        logger.info(entry)
+        
+        if isinstance(entry, list):
+            values = process_list(entry, topic)
+        
+        elif isinstance(entry, dict):
+            values = process_dict(entry, topic)
+        
+        else:
+            raise
+        
+        topic_strings = topic_strings + convert_values_to_topics(topic, values)
+    
+    logger.info(topic_strings)
 
 
 while True:
