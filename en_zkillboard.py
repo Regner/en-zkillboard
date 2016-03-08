@@ -8,13 +8,6 @@ import requests
 from time import sleep
 from gcloud import datastore, pubsub
 
-try:
-    import googleclouddebugger
-    googleclouddebugger.AttachDebugger()
-
-except ImportError:
-    pass
-
 logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -32,12 +25,16 @@ if not PS_TOPIC.exists():
 
 
 def format_notification_subtitle(killmail):
-    character = killmail['package']['killmail']['victim']['character']['name']
     ship = killmail['package']['killmail']['victim']['shipType']['name']
     solar_system = killmail['package']['killmail']['solarSystem']['name']
     value = '{0:,} ISK'.format(killmail['package']['zkb']['totalValue'])
     
-    return '{} just lost a {} worth {} in {}.'.format(character, ship, value, solar_system)
+    try:
+        name = killmail['package']['killmail']['victim']['character']['name']
+        return '{} just lost a {} worth {} in {}.'.format(name, ship, value, solar_system)
+        
+    except KeyError:
+        return 'A {} worth {} just blew up in {}.'.format(ship, value, solar_system)
 
 
 def format_notification_url(killmail):
