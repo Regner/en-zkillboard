@@ -117,6 +117,7 @@ def create_topic_string(topic, value):
 
 def convert_values_to_topics(topic, values):
     topic_strings = []
+    values = set(values)
     
     for value in values:
         topic_strings.append(create_topic_string(topic['topic'], value))
