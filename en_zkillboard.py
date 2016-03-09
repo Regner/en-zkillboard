@@ -43,37 +43,23 @@ def format_notification_url(killmail):
 
 
 def prepare_notifications(killmail, topics):
-    topics_per_chunk = 44
-    topic_chunks = [topics[x:x + topics_per_chunk] for x in xrange(0, len(topics), topics_per_chunk)]
-    
     subtitle = format_notification_subtitle(killmail)
     url = format_notification_url(killmail)
     
-    for chunk in topic_chunks:
-        send_notification(chunk, subtitle, url)
+    for topic in topics:
+        send_notification(topic, subtitle, url)
 
-def send_notification(topics, subtitle, url):
-    topics = json.dumps(topics)
-    
-    try:
-        PS_TOPIC.publish(
-            '',
-            title='zKillboard',
-            subtitle=subtitle,
-            url=url,
-            service='en-zkillboard',
-            topics=topics,
-        )
-    
-    except BadRequest as e:
-        logger.error(
-            'Bad request when trying to send notification. Subtitle: "{}" Url: "{}" Topics: "{}"ls -la Error: {}.'.format(
-                subtitle,
-                url,
-                topics,
-                e
-            )
-        )
+
+def send_notification(topic, subtitle, url):
+    PS_TOPIC.publish(
+        '',
+        title='zKillboard',
+        subtitle=subtitle,
+        url=url,
+        service='en-zkillboard',
+        topic=topic,
+        collapse_key=topic,
+    )
 
 
 def get_topics():
