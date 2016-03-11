@@ -9,8 +9,8 @@ machine:
 dependencies:
   pre:
     - git clone https://github.com/Regner/en-kube-config.git
-    - ./en-kube-config/ensure-kubernetes-installed.sh
-    - ./en-kube-config/setup-gcloud.sh
+    - ./en-kube-config/deploy-scripts/ensure-kubernetes-installed.sh
+    - ./en-kube-config/deploy-scripts/setup-gcloud.sh
 
 test:
   override:
@@ -20,5 +20,5 @@ deployment:
   build and deploy to dev:
     branch: master
     commands:
-      - ./en-kube-config/docker-push.sh
-      - ./en-kube-config/deploy.sh "eve-notifications" "en-zkillboard" "en-kube-config/en-zkillboard/en-zkillboard-rc.yml"
+      - ./en-kube-config/deploy-scripts/docker-build-push.sh
+      - ./en-kube-config/deploy-scripts/deploy.sh "eve-notifications" "en-zkillboard"

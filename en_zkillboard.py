@@ -14,7 +14,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 # App Settings
-EN_TOPIC_SETTINGS = os.environ.get('EN_TOPIC_SETTINGS', 'http://en-topic-settings:80/external')
+EN_TOPIC_SETTINGS = os.environ.get('EN_TOPIC_SETTINGS', 'http://en-topic-settings/external')
 ZKILLBOARD_REDISQ = os.environ.get('ZKILLBOARD_REDISQ', 'http://redisq.zkillboard.com/listen.php')
 
 # PubSub Settings
@@ -43,6 +43,8 @@ def format_notification_url(killmail):
 
 
 def prepare_notifications(killmail, topics):
+    topics = set(topics)
+    
     subtitle = format_notification_subtitle(killmail)
     url = format_notification_url(killmail)
     
@@ -103,7 +105,6 @@ def create_topic_string(topic, value):
 
 def convert_values_to_topics(topic, values):
     topic_strings = []
-    values = set(values)
     
     for value in values:
         topic_strings.append(create_topic_string(topic['topic'], value))
